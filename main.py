@@ -39,10 +39,7 @@ def display_chat_history():
 # Set up Google Gemini-Pro AI model
 GOOGLE_API_KEY=gen_ai.configure(api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
 model = gen_ai.GenerativeModel('gemini-pro')
-chat = model.start_chat(history=[])
-def get_gemini_response(question):  
-    response=chat.send_message(question,stream=True)
-    return response
+
 
 # Function to translate roles from Gemini-Pro to Streamlit terminology
 def translate_role_for_streamlit(user_role):
@@ -53,7 +50,7 @@ def translate_role_for_streamlit(user_role):
 
 # Initialize chat session in Streamlit if not already present
 if "chat_session" not in st.session_state:
-    st.session_state.chat_session = []
+    st.session_state.chat_session = model.start_chat(history=[])
     st.session_state.new_chat_clicked = False
 # if the chat history is vide creat a new chat
 
@@ -144,7 +141,7 @@ if user_prompt:
           
     else:
         # Send user's message to Gemini-Pro and get the response
-        gemini_response =get_gemini_response(user_prompt)
+        gemini_response = st.session_state.chat_session.send_message(user_prompt)
         st.session_state.chat_session.append({"role": "assistant", "context": gemini_response})
         # Display Gemini-Pro's response
         with st.chat_message("assistant"):
