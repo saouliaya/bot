@@ -5,4 +5,3 @@ langchain_community==0.0.16
 PyPDF2
 langchain_google_genai 
 faiss-cpu
-pickle
