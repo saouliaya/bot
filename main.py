@@ -47,10 +47,13 @@ def translate_role_for_streamlit(user_role):
         return "assistant"
     else:
         return user_role
-
+chat=model.start_chat(history=[])
+def get_gemini_response(question):
+    response=chat.send_message(question,stream=True)
+    return response
 # Initialize chat session in Streamlit if not already present
 if "chat_session" not in st.session_state:
-    st.session_state.chat_session = model.start_chat(history=[])
+    st.session_state.chat_session = []
     st.session_state.new_chat_clicked = False
 # if the chat history is vide creat a new chat
 
@@ -141,7 +144,7 @@ if user_prompt:
           
     else:
         # Send user's message to Gemini-Pro and get the response
-        gemini_response = st.session_state.chat_session.send_message(user_prompt)
+        gemini_response=get_gemini_response(user_prompt)
         st.session_state.chat_session.append({"role": "assistant", "context": gemini_response})
         # Display Gemini-Pro's response
         with st.chat_message("assistant"):
