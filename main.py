@@ -37,7 +37,7 @@ def display_chat_history():
             st.sidebar.text(f"Assistant: {chat['context']}")
 
 # Set up Google Gemini-Pro AI model
-gen_ai.configure(api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
+gen_ai.configure(GOOGLE_API_KEY="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
 model = gen_ai.GenerativeModel('gemini-pro')
 
 # Function to translate roles from Gemini-Pro to Streamlit terminology
