@@ -5,3 +5,10 @@ langchain_community==0.0.16
 PyPDF2
 langchain_google_genai 
 faiss-cpu
+
+
+# Display the chat history
+for message in st.session_state.chat_session:
+    if not st.session_state.new_chat_clicked:
+        with st.chat_message(translate_role_for_streamlit(message["role"])):
+            st.markdown(message["context"])

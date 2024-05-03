@@ -142,7 +142,7 @@ if user_prompt:
         st.session_state.chat_session.append({"role": "assistant", "context": gemini_response})
         # Display Gemini-Pro's response
         with st.chat_message("assistant"):
-                response=gemini_response.text
+                response=gemini_response
                 st.markdown(response)
     pass
 
