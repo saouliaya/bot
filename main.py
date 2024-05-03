@@ -83,7 +83,7 @@ def get_vector_store(text_chunks):
     vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
     vector_store.save_local("faiss_index")
 
-pdf_docs=['Banque_FR.pdf','banque_AR.pdf','pdfchat.pdf']#la base de connaissance
+pdf_docs=['Banque_FR.pdf','banque_AR.pdf']#la base de connaissance
 raw_text = get_pdf_text(pdf_docs)
 text_chunks = get_text_chunks(raw_text)
 get_vector_store(text_chunks)
@@ -124,7 +124,7 @@ if user_prompt:
     # Send user's message to Gemini-Pro and get the response
     bot_response = user_input(user_prompt)
     # Add bot's response to chat session
-    st.session_state.chat_session.append({"role": "model", "context": bot_response})
+    st.session_state.chat_session.append({"role": "assistant", "context": bot_response})
     # Display bot's response
     with st.chat_message("assistant"):
         st.markdown(bot_response)
