@@ -109,16 +109,16 @@ def user_input(user_question):
     new_db = FAISS.load_local("faiss_index", embeddings)#load the db
     docs = new_db.similarity_search(user_question)#search in the db for similarity
     # Use conversational chain to answer based on found documents
-    if docs != None:
-        # Use conversational chain to answer based on found documents
-        chain = get_conversational_chain()
-        response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
-        return response["output_text"]
-    else:
+     # Use conversational chain to answer based on found documents
+    chain = get_conversational_chain()
+    response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
+    if response["output_text"]=="answer is not available in the context":
         # If AI doesn't find an answer in the PDF files, send the user's question to AI model
-        model = ChatGoogleGenerativeAI(model='gemini-pro', temperature=0.3, google_api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
+        model = ChatGoogleGenerativeAI(model='gemini-pro', temperature=0.3, google_api_key=GOOGLE_API_KEY)
         ai_response = model.send_message(user_question).text
-        return ai_response
+        return ai_response 
+    else:
+        return response["output_text"]
 
 # Input field for user's message
 user_prompt = st.chat_input("Type your message here...")
