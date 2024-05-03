@@ -37,7 +37,7 @@ def display_chat_history():
             st.sidebar.text(f"Assistant: {chat['context']}")
 
 # Set up Google Gemini-Pro AI model
-gen_ai.configure(GOOGLE_API_KEY="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
+GOOGLE_API_KEY=gen_ai.configure(api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
 model = gen_ai.GenerativeModel('gemini-pro')
 
 # Function to translate roles from Gemini-Pro to Streamlit terminology
@@ -79,7 +79,7 @@ def get_text_chunks(text):
 
 #store he text chunks into vector data base using faiss
 def get_vector_store(text_chunks):
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
     vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
     vector_store.save_local("faiss_index")
 
@@ -98,14 +98,14 @@ def get_conversational_chain():
 
     Answer:
     """
-    model = ChatGoogleGenerativeAI(model='gemini-pro', temperature=0.3, google_api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
+    model = ChatGoogleGenerativeAI(model='gemini-pro', temperature=0.3, google_api_key=GOOGLE_API_KEY)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     return chain
 
 #generating a response after the user input the question
 def user_input(user_question):
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
     new_db = FAISS.load_local("faiss_index", embeddings,allow_dangerous_deserialization=True)#load the db
     docs = new_db.similarity_search(user_question)#search in the db for similarity
     # Use conversational chain to answer based on found documents
