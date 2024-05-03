@@ -137,21 +137,18 @@ if user_prompt:
     bot_response = user_input(user_prompt)
     # Display bot's response
     if bot_response is not False:
-        
-     # Display bot's response
+        st.session_state.chat_session.append({"role": "assistant", "context": bot_response})
+        # Display bot's response
         with st.chat_message("assistant"):
-            st.session_state.chat_session.append({"role": "assistant", "context": bot_response})
             st.markdown(bot_response)
           
     else:
-            # Send user's message to Gemini-Pro and get the response
+        # Send user's message to Gemini-Pro and get the response
         gemini_response =get_gemini_response(user_prompt)
-        st.session_state.chat_session.append({"role": "assistant", "context": response})
-            # Display Gemini-Pro's response
+        st.session_state.chat_session.append({"role": "assistant", "context": gemini_response})
+        # Display Gemini-Pro's response
         with st.chat_message("assistant"):
-                response = gemini_response.text
-                st.markdown(response)
-                # Adding the AI response into the chat history list
-                pass
+                st.markdown(gemini_response.text)
+    pass
 
 display_chat_history()
