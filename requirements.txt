@@ -1,4 +1,5 @@
 streamlit
+python =3.12
 google.generativeai
 langchain
 langchain_community==0.0.16
