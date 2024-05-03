@@ -118,7 +118,7 @@ def user_input(user_question):
     response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
     try:
         response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
-        if response is not None and response["output_text"] != "answer is not available in the context":
+        if response is not None and response["output_text"] != "answer is not available in the context"& "Cette question n'est pas abordée dans le texte fourni"&"الاجابة غير متواجدة في السياق المقدم":
             return response["output_text"]
         else:
             return False
