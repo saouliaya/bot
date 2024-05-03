@@ -109,7 +109,7 @@ def user_input(user_question):
     new_db = FAISS.load_local("faiss_index", embeddings)#load the db
     docs = new_db.similarity_search(user_question)#search in the db for similarity
     # Use conversational chain to answer based on found documents
-    if docs is not None:
+    if docs != None:
         # Use conversational chain to answer based on found documents
         chain = get_conversational_chain()
         response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
