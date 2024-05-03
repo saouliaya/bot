@@ -112,13 +112,15 @@ def user_input(user_question):
      # Use conversational chain to answer based on found documents
     chain = get_conversational_chain()
     response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
-    if response["output_text"]=="answer is not available in the context":
-        # If AI doesn't find an answer in the PDF files, send the user's question to AI model
-        model = ChatGoogleGenerativeAI(model='gemini-pro', temperature=0.3, google_api_key=GOOGLE_API_KEY)
-        ai_response = model.send_message(user_question)
-        return ai_response.text
-    else:
-        return response["output_text"]
+    try:
+        response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
+        if response is not None and response["output_text"] != "answer is not available in the context":
+            return response["output_text"]
+        else:
+            return False
+    except Exception as e:
+        print(f"An exception occurred: {e}")
+        return False
 
 # Input field for user's message
 user_prompt = st.chat_input("Type your message here...")
@@ -129,10 +131,24 @@ if user_prompt:
     st.chat_message("user").markdown(user_prompt)
     # Send user's message to Gemini-Pro and get the response
     bot_response = user_input(user_prompt)
-    # Add bot's response to chat session
-    st.session_state.chat_session.append({"role": "assistant", "context": bot_response})
     # Display bot's response
-    with st.chat_message("assistant"):
-        st.markdown(bot_response)
+    if bot_response is not False:
+        
+     # Display bot's response
+        with st.chat_message("assistant"):
+            st.session_state.chat_session.append({"role": "assistant", "context": bot_response})
+            st.markdown(bot_response)
+          
+    else:
+            # Send user's message to Gemini-Pro and get the response
+     gemini_response = st.session_state.chat_session.send_message(user_prompt)
+
+            # Display Gemini-Pro's response
+     with st.chat_message("assistant"):
+                response = gemini_response.text
+                st.markdown(response)
+                # Adding the AI response into the chat history list
+                st.session_state.chat_session.append({"role": "assistant", "context": response})
+                pass
 
     display_chat_history()
