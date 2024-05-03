@@ -50,8 +50,8 @@ def translate_role_for_streamlit(user_role):
         return user_role
 chat=model.start_chat(history=[])
 def get_gemini_response(question):
-    response=chat.send_message(question,stream=True)
-    return response
+    response=chat.send_message(question)
+    return response.text
 # Initialize chat session in Streamlit if not already present
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = []
