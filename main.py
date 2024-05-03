@@ -1,12 +1,9 @@
 import streamlit as st
-import pickle
 import google.generativeai as gen_ai
 from PyPDF2 import PdfReader
-from langchain_community.document_loaders import UnstructuredURLLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter , CharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_google_genai import GoogleGenerativeAIEmbeddings,ChatGoogleGenerativeAI
+from langchain.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 
@@ -40,7 +37,7 @@ def display_chat_history():
             st.sidebar.text(f"Assistant: {chat['context']}")
 
 # Set up Google Gemini-Pro AI model
-api_key=gen_ai.configure(api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
+gen_ai.configure(api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
 model = gen_ai.GenerativeModel('gemini-pro')
 
 # Function to translate roles from Gemini-Pro to Streamlit terminology
@@ -61,16 +58,10 @@ for message in st.session_state.chat_session:
     if not st.session_state.new_chat_clicked:
         with st.chat_message(translate_role_for_streamlit(message["role"])):
             st.markdown(message["context"])
-def load_web(urls):
-    #load the data from the fuculty site
-    loader = UnstructuredURLLoader(urls)
-    data = loader.load()
-    text_splitt=CharacterTextSplitter(separator='\n',chunk_size=10000, chunk_overlap=1000)
-    docs=text_splitt.split_documents(data)
-    return docs
+
 #extract the text from the pdf files
 def get_pdf_text(pdf_docs):
-    text = ""
+    text = "" 
     for pdf in pdf_docs:
         try:
             pdf_reader = PdfReader(pdf)
@@ -87,33 +78,21 @@ def get_text_chunks(text):
     return chunks
 
 #store he text chunks into vector data base using faiss
-def get_vector_store_web(data):
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
-    vector_store = FAISS.from_documents(data, embedding=embeddings)
-    with open("faiss_base","wb")as f:
-        pickle.dump(vector_store, f)
-
-
-#store he text chunks into vector data base using faiss
 def get_vector_store(text_chunks):
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
     vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
-    with open("faiss_base","wb")as f:
-        pickle.dump(vector_store, f)
+    vector_store.save_local("faiss_index")
 
-urls=["https://fsciences.univ-setif.dz",
-      "https://fsciences.univ-setif.dz/sites_departements/informatique",
-      "https://fsciences.univ-setif.dz/GP_FR/index"]
-data =load_web(urls)
-get_vector_store_web(data)
-pdf_docs=['Banque_FR.pdf','banque_AR.pdf','pdfchat.pdf']
+pdf_docs=['Banque_FR.pdf','banque_AR.pdf']#la base de connaissance
 raw_text = get_pdf_text(pdf_docs)
 text_chunks = get_text_chunks(raw_text)
 get_vector_store(text_chunks)
-print(data)
+
 #creat a prompt for the ai model
 def get_conversational_chain():
-    prompt_template ="""if the answer is not in provided context just say, "answer is not available in the context", don't provide the wrong answer\n\n
+    prompt_template = """
+    Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
+    provided context just say, "answer is not available in the context", don't provide the wrong answer\n\n
     Context:\n {context}?\n
     Question: \n{question}\n
 
@@ -123,35 +102,31 @@ def get_conversational_chain():
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     return chain
-    
+
 #generating a response after the user input the question
 def user_input(user_question):
-    with open("faiss_base","rb")as f:
-        new_db=pickle.load(f)
-    docs = new_db.similarity_search(user_question)
-    if docs is not None:
-        # Use conversational chain to answer based on found documents
-        chain = get_conversational_chain()
-        response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
-        return response["output_text"]
-    else:
-        # If AI doesn't find an answer in the PDF files, send the user's question to AI model
-        model = ChatGoogleGenerativeAI(model='gemini-pro', temperature=0.3, google_api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
-        ai_response = model.send_message(user_question).text
-        return ai_response
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
+    new_db = FAISS.load_local("faiss_index", embeddings,allow_dangerous_deserialization=True)#load the db
+    docs = new_db.similarity_search(user_question)#search in the db for similarity
+    # Use conversational chain to answer based on found documents
+    chain = get_conversational_chain()#load the prompt
+    response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)#get the response based on the prompt
+    # return the response
+    return response["output_text"]
+
 # Input field for user's message
 user_prompt = st.chat_input("Type your message here...")
 if user_prompt:
     # Add user's message to chat session
     st.session_state.chat_session.append({"role": "user", "context": user_prompt})
-    # Add user's message to chat and display it
+    # Add user's message to chat history and display it
     st.chat_message("user").markdown(user_prompt)
     # Send user's message to Gemini-Pro and get the response
     bot_response = user_input(user_prompt)
     # Add bot's response to chat session
-    st.session_state.chat_session.append({"role": "assistant", "context": bot_response})
+    st.session_state.chat_session.append({"role": "model", "context": bot_response})
     # Display bot's response
     with st.chat_message("assistant"):
         st.markdown(bot_response)
-           
-display_chat_history()
+
+    display_chat_history()
