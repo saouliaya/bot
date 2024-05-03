@@ -106,7 +106,7 @@ def get_conversational_chain():
 #generating a response after the user input the question
 def user_input(user_question):
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
-    new_db = FAISS.load_local("faiss_index", embeddings,allow_dangerous_deserialization=True)#load the db
+    new_db = FAISS.load_local("faiss_index", embeddings)#load the db
     docs = new_db.similarity_search(user_question)#search in the db for similarity
     # Use conversational chain to answer based on found documents
     chain = get_conversational_chain()#load the prompt
