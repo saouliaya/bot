@@ -115,8 +115,8 @@ def user_input(user_question):
     if response["output_text"]=="answer is not available in the context":
         # If AI doesn't find an answer in the PDF files, send the user's question to AI model
         model = ChatGoogleGenerativeAI(model='gemini-pro', temperature=0.3, google_api_key=GOOGLE_API_KEY)
-        ai_response = model.send_message(user_question).text
-        return ai_response 
+        ai_response = model.send_message(user_question)
+        return ai_response.text
     else:
         return response["output_text"]
 
