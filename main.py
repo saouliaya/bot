@@ -57,8 +57,8 @@ if "chat_session" not in st.session_state:
 # Display the chat history
 for message in st.session_state.chat_session:
     if not st.session_state.new_chat_clicked:
-        with st.chat_message(translate_role_for_streamlit(message["role"])):
-            st.markdown(message["context"])
+        with st.chat_message(translate_role_for_streamlit(message.role)):
+            st.markdown(message.parts[0].text)
 
 #extract the text from the pdf files
 def get_pdf_text(pdf_docs):
