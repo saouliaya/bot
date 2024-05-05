@@ -80,7 +80,7 @@ def get_vector_store_web(data):
     vector_store = FAISS.from_documents(data, embedding=embeddings)
     vector_store.save_local("faiss_index")
 
-urls=["https://fsciences.univ-setif.dz/main_page/english",
+urls=["https://fsciences.univ-setif.dz/main_page/home/english",
       "https://fsciences.univ-setif.dz/sites_departements/informatique/english"]
 data =load_web(urls)
 get_vector_store_web(data)
@@ -109,7 +109,7 @@ def get_vector_store(text_chunks):
     vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
     vector_store.save_local("faiss_index")
 
-pdf_docs=['Banque_FR.pdf','banque_AR.pdf']#la base de connaissance
+pdf_docs=['Banque_FR.pdf','banque_AR.pdf',"pdfchat.pdf"]#la base de connaissance
 raw_text = get_pdf_text(pdf_docs)
 text_chunks = get_text_chunks(raw_text)
 get_vector_store(text_chunks)
