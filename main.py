@@ -1,6 +1,7 @@
 import streamlit as st
 import google.generativeai as gen_ai
 from PyPDF2 import PdfReader
+from langchain_community.document_loaders import UnstructuredURLLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings,ChatGoogleGenerativeAI
 from langchain.vectorstores import FAISS
@@ -63,6 +64,27 @@ for message in st.session_state.chat_session:
     if not st.session_state.new_chat_clicked:
         with st.chat_message(translate_role_for_streamlit(message["role"])):
             st.markdown(message["context"])
+
+def load_web(urls):
+    #load the data from the fuculty site
+    loader = UnstructuredURLLoader(urls)
+    data = loader.load()
+    text_splitt=RecursiveCharacterTextSplitter(separator='\n',chunk_size=10000, chunk_overlap=1000)
+    docs=text_splitt.split_documents(data)
+    return docs
+    
+    
+#store he text chunks into vector data base using faiss
+def get_vector_store_web(data):
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
+    vector_store = FAISS.from_documents(data, embedding=embeddings)
+    vector_store.save_local("faiss_index")
+
+urls=["https://fsciences.univ-setif.dz/main_page/english",
+      "https://fsciences.univ-setif.dz/sites_departements/informatique/english"]
+data =load_web(urls)
+get_vector_store_web(data)
+
 #extract the text from the pdf files
 def get_pdf_text(pdf_docs):
     text = "" 
