@@ -1,7 +1,6 @@
 import streamlit as st
 import google.generativeai as gen_ai
 from PyPDF2 import PdfReader
-from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings,ChatGoogleGenerativeAI
 from langchain.vectorstores import FAISS
@@ -65,26 +64,6 @@ for message in st.session_state.chat_session:
         with st.chat_message(translate_role_for_streamlit(message["role"])):
             st.markdown(message["context"])
 
-def load_web(urls):
-    #load the data from the fuculty site
-    loader = WebBaseLoader(urls)
-    data = loader.load()
-    text_splitt=RecursiveCharacterTextSplitter(separator='\n',chunk_size=10000, chunk_overlap=1000)
-    docs=text_splitt.split_documents(data)
-    return docs
-    
-    
-#store he text chunks into vector data base using faiss
-def get_vector_store_web(data):
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
-    vector_store = FAISS.from_documents(data, embedding=embeddings)
-    vector_store.save_local("faiss_index")
-
-urls=["https://fsciences.univ-setif.dz/main_page/home/english",
-      "https://fsciences.univ-setif.dz/sites_departements/informatique/english"]
-data =load_web(urls)
-get_vector_store_web(data)
-
 #extract the text from the pdf files
 def get_pdf_text(pdf_docs):
     text = "" 
@@ -109,21 +88,18 @@ def get_vector_store(text_chunks):
     vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
     vector_store.save_local("faiss_index")
 
-pdf_docs=['Banque_FR.pdf','banque_AR.pdf',"pdfchat.pdf"]#la base de connaissance
-raw_text = get_pdf_text(pdf_docs)
-text_chunks = get_text_chunks(raw_text)
-get_vector_store(text_chunks)
+pdf_docs=['Banque_FR.pdf','banque_AR.pdf','pdfchat.pdf']#la base de connaissance
+raw_text = get_pdf_text(pdf_docs)#extrairle text
+text_chunks = get_text_chunks(raw_text)#splitt the text
+get_vector_store(text_chunks)#store the information into faiss database
 
 #creat a prompt for the ai model
 def get_conversational_chain():
-    prompt_template = """
-    Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
+    prompt_template = """Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
     provided context just say, "answer is not available in the context", don't provide the wrong answer\n\n
     Context:\n {context}?\n
     Question: \n{question}\n
-
-    Answer:
-    """
+    Answer:"""
     model = ChatGoogleGenerativeAI(model='gemini-pro', google_api_key=GOOGLE_API_KEY)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
