@@ -1,7 +1,7 @@
 import streamlit as st
 import google.generativeai as gen_ai
 from PyPDF2 import PdfReader
-from langchain_community.document_loaders import UnstructuredURLLoader
+from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings,ChatGoogleGenerativeAI
 from langchain.vectorstores import FAISS
@@ -67,7 +67,7 @@ for message in st.session_state.chat_session:
 
 def load_web(urls):
     #load the data from the fuculty site
-    loader = UnstructuredURLLoader(urls)
+    loader = WebBaseLoader(urls)
     data = loader.load()
     text_splitt=RecursiveCharacterTextSplitter(separator='\n',chunk_size=10000, chunk_overlap=1000)
     docs=text_splitt.split_documents(data)
