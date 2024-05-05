@@ -88,7 +88,7 @@ def get_vector_store(text_chunks):
     vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
     vector_store.save_local("faiss_index")
 
-pdf_docs=['Banque_FR.pdf','banque_AR.pdf','pdfchat.pdf']#la base de connaissance
+pdf_docs=['Banque_FR.pdf','banque_AR.pdf']#la base de connaissance
 raw_text = get_pdf_text(pdf_docs)#extrairle text
 text_chunks = get_text_chunks(raw_text)#splitt the text
 get_vector_store(text_chunks)#store the information into faiss database
