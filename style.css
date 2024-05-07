@@ -6,14 +6,8 @@ body.light {
 
 /* Dark Mode Styles */
 body.dark {
-    background-color: #1f1f1f;
+    background-color: #000000;
     color: #ffffff;
-}
-
-/* Custom Mode Styles */
-body.custom {
-    background-color: #f0f0f0;
-    color: #333333;
 }
 
 /* Toggle Button Styles */
