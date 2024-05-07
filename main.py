@@ -27,7 +27,6 @@ if st.sidebar.button("New Chat"):
     st.session_state.new_chat_clicked = True
     st.empty()  # Clear the UI to remove chat messages
 
-theme = st.sidebar.radio("Select Theme", ("Light", "Dark"))
 st.sidebar.subheader("Chat History")
 # Function to display chat history in the sidebar
 def display_chat_history():
@@ -40,22 +39,6 @@ def display_chat_history():
 # Set up Google Gemini-Pro AI model
 GOOGLE_API_KEY=gen_ai.configure(api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
 model = gen_ai.GenerativeModel('gemini-pro')
-
-if theme == "Light":
-    st.markdown("""<style>
-    /* Light Mode Styles */
-    body {
-        background-color: #ffffff;
-        color: #000000;}
-    </style>""", unsafe_allow_html=True)
-else:
-    st.markdown("""<style>
-    /* Dark Mode Styles */
-    body {
-    background-color: #000000;
-    color: #ffffff;}
-    </style>""", unsafe_allow_html=True)
-
 
 # Function to translate roles from Gemini-Pro to Streamlit terminology
 def translate_role_for_streamlit(user_role):
