@@ -1,0 +1,26 @@
+/* Light Mode Styles */
+body.light {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+/* Dark Mode Styles */
+body.dark {
+    background-color: #1f1f1f;
+    color: #ffffff;
+}
+
+/* Custom Mode Styles */
+body.custom {
+    background-color: #f0f0f0;
+    color: #333333;
+}
+
+/* Toggle Button Styles */
+.toggle-container {
+    margin: 20px 0;
+}
+
+.toggle-label {
+    margin-right: 10px;
+}
