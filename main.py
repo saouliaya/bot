@@ -41,50 +41,20 @@ def display_chat_history():
 GOOGLE_API_KEY=gen_ai.configure(api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
 model = gen_ai.GenerativeModel('gemini-pro')
 
-
-# Function to load CSS styles
-def load_css():
-    css = """
-    <style>
-    /* Light Mode Styles */
-    body.light {
-        background-color: #ffffff;
-        color: #000000;
-    }
-
-    /* Dark Mode Styles */
-    body.dark {
-        background-color: #000000;
-        color: #ffffff;
-    }
-
-    /* Custom Mode Styles */
-    body.custom {
-        background-color: #f0f0f0;
-        color: #333333;
-    }
-
-    /* Toggle Button Styles */
-    .toggle-container {
-        margin: 20px 0;
-    }
-
-    .toggle-label {
-        margin-right: 10px;
-    }
-    </style>
-    """
-    st.markdown(css, unsafe_allow_html=True)
-
-# Load CSS styles
-load_css()
-
 if theme == "Light":
-    st.markdown('<body class="light">', unsafe_allow_html=True)
-elif theme == "Dark":
-    st.markdown('<body class="dark">', unsafe_allow_html=True)
+    st.markdown("""<style>
+    /* Light Mode Styles */
+    body {
+        background-color: #ffffff;
+        color: #000000;}
+    </style>""", unsafe_allow_html=True)
 else:
-    st.markdown('<body class="custom">', unsafe_allow_html=True)
+    st.markdown("""<style>
+    /* Dark Mode Styles */
+    body {
+    background-color: #000000;
+    color: #ffffff;}
+    </style>""", unsafe_allow_html=True)
 
 
 # Function to translate roles from Gemini-Pro to Streamlit terminology
