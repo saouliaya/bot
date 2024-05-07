@@ -45,6 +45,7 @@ model = gen_ai.GenerativeModel('gemini-pro')
 # Function to load CSS styles
 def load_css():
     css = """
+    <style>
     /* Light Mode Styles */
     body.light {
         background-color: #ffffff;
@@ -71,8 +72,9 @@ def load_css():
     .toggle-label {
         margin-right: 10px;
     }
+    </style>
     """
-    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+    st.markdown(css, unsafe_allow_html=True)
 
 # Load CSS styles
 load_css()
