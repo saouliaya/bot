@@ -43,21 +43,17 @@ model = gen_ai.GenerativeModel('gemini-pro')
 
 
 # Function to load CSS styles
-def load_css(file_name):
+def load_css(file_name,theme):
     with open(file_name, 'r') as f:
         css = f.read()
-        st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+        if theme == "Light":
+            st.markdown(f'<style><body class="light">{css}</body</style>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<style><body class="dark">{css}</body</style>', unsafe_allow_html=True)
 
 # Load CSS styles
-load_css('style.css')
+load_css('style.css',theme)
 
-
-
-# Apply theme based on selection
-if theme == "Light":
-    st.markdown('<body class="light">', unsafe_allow_html=True)
-else:
-    st.markdown('<body class="dark">', unsafe_allow_html=True)
 
 
 # Function to translate roles from Gemini-Pro to Streamlit terminology
