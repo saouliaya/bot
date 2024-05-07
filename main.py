@@ -47,9 +47,9 @@ def load_css(file_name,theme):
     with open(file_name, 'r') as f:
         css = f.read()
         if theme == "Light":
-            st.markdown(f'<style><body class="light">{css}</body</style>', unsafe_allow_html=True)
+            st.markdown(f'<style><body class="light">{css}</body></style>', unsafe_allow_html=True)
         else:
-            st.markdown(f'<style><body class="dark">{css}</body</style>', unsafe_allow_html=True)
+            st.markdown(f'<style><body class="dark">{css}</body></style>', unsafe_allow_html=True)
 
 # Load CSS styles
 load_css('style.css',theme)
