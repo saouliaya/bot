@@ -55,9 +55,9 @@ load_css('style.css')
 
 # Apply theme based on selection
 if theme == "Light":
-    st.markdown(f'<body class="light">', unsafe_allow_html=True)
+    st.markdown('<body class="light">', unsafe_allow_html=True)
 else:
-    st.markdown(f'<body class="dark">', unsafe_allow_html=True)
+    st.markdown('<body class="dark">', unsafe_allow_html=True)
 
 
 # Function to translate roles from Gemini-Pro to Streamlit terminology
