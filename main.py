@@ -54,7 +54,7 @@ def load_css():
 
     /* Dark Mode Styles */
     body.dark {
-        background-color: #1f1f1f;
+        background-color: #000000;
         color: #ffffff;
     }
 
