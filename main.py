@@ -43,16 +43,46 @@ model = gen_ai.GenerativeModel('gemini-pro')
 
 
 # Function to load CSS styles
-def load_css(file_name,theme):
-    with open(file_name, 'r') as f:
-        if theme == "Light":
-            st.markdown(f'<style><body class="light">{f.read()}</body></style>', unsafe_allow_html=True)
-        else:
-            st.markdown(f'<style><body class="dark">{f.read()}</body></style>', unsafe_allow_html=True)
+def load_css():
+    css = """
+    /* Light Mode Styles */
+    body.light {
+        background-color: #ffffff;
+        color: #000000;
+    }
+
+    /* Dark Mode Styles */
+    body.dark {
+        background-color: #1f1f1f;
+        color: #ffffff;
+    }
+
+    /* Custom Mode Styles */
+    body.custom {
+        background-color: #f0f0f0;
+        color: #333333;
+    }
+
+    /* Toggle Button Styles */
+    .toggle-container {
+        margin: 20px 0;
+    }
+
+    .toggle-label {
+        margin-right: 10px;
+    }
+    """
+    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
 # Load CSS styles
-load_css('style.css',theme)
+load_css()
 
+if theme == "Light":
+    st.markdown('<body class="light">', unsafe_allow_html=True)
+elif theme == "Dark":
+    st.markdown('<body class="dark">', unsafe_allow_html=True)
+else:
+    st.markdown('<body class="custom">', unsafe_allow_html=True)
 
 
 # Function to translate roles from Gemini-Pro to Streamlit terminology
