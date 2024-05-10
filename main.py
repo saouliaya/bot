@@ -27,6 +27,8 @@ if st.sidebar.button("New Chat"):
     st.session_state.new_chat_clicked = True
     st.empty()  # Clear the UI to remove chat messages
 
+theme = st.sidebar.radio("Select Theme", ("Light", "Dark","Custom"))
+
 st.sidebar.subheader("Chat History")
 # Function to display chat history in the sidebar
 def display_chat_history():
@@ -36,6 +38,30 @@ def display_chat_history():
         elif chat["role"] == "assistant":
             st.sidebar.text(f"Assistant: {chat['context']}")
 
+def load_css(theme):
+    if theme == "Light":
+        st.write("""
+            <style>
+            .stApp { background-color:#ffffff ; }
+            .stSidebar { background-color: #ffffff;}
+            .stTitle { color: #007bff; }
+            </style>
+            """, unsafe_allow_html=True)
+    elif theme == "Dark":
+        st.write("""<style>
+            .stApp { background-color:#000000 ;}
+            .stSidebar { background-color: #000000;}
+            .stTitle { color: #ffffff; }
+            </style>
+            """, unsafe_allow_html=True)
+    else:
+        st.write("""<style>
+            .stApp { background-color:#bcfc97 ;}
+            .stSidebar { background-color: #bcfc97;}
+            .stTitle { color: #28a745; }
+            </style>
+            """, unsafe_allow_html=True)
+load_css(theme)
 # Set up Google Gemini-Pro AI model
 GOOGLE_API_KEY=gen_ai.configure(api_key="AIzaSyCiPt8B5VpJnwb9ChD6abJ67hjnCu6gvCI")
 model = gen_ai.GenerativeModel('gemini-pro')
